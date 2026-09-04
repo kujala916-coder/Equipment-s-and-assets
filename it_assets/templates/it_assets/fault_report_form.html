@@ -1,0 +1,9 @@
+{% extends "it_assets/base.html" %}
+{% block content %}
+<h2>Report a Fault</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Submit</button>
+</form>
+{% endblock %}

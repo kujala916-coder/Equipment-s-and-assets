@@ -1,0 +1,9 @@
+{% extends "it_assets/base.html" %}
+{% block content %}
+<h2>{% if repair %}Update Repair Record{% else %}Add Repair Record{% endif %} — {{ fault.asset.asset_id }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Save</button>
+</form>
+{% endblock %}

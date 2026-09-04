@@ -1,0 +1,78 @@
+{% extends "it_assets/base.html" %}
+{% block title %}{{ asset.asset_id }}{% endblock %}
+{% block content %}
+<h2>{{ asset.asset_id }} — {{ asset.brand }} {{ asset.model }}</h2>
+<p><a class="btn" href="{% url 'it_assets:asset_update' asset.pk %}">Edit</a></p>
+
+<div class="card" style="display: flex; gap: 20px; align-items: center;">
+    <img src="{% url 'it_assets:asset_qr_code' asset.pk %}" alt="QR code" style="width: 120px; height: 120px;">
+    <div>
+        <p><strong>Scan to view this asset's page.</strong></p>
+        <p>Asset ID: {{ asset.asset_id }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <p><strong>Category:</strong> {{ asset.category.name }}</p>
+    <p><strong>Serial Number:</strong> {{ asset.serial_number }}</p>
+    <p><strong>Status:</strong> <span class="status-badge">{{ asset.get_status_display }}</span></p>
+    <p><strong>Assigned To:</strong> {{ asset.assigned_to|default:"—" }}</p>
+    <p><strong>Department:</strong> {{ asset.current_department|default:"—" }}</p>
+    <p><strong>Location:</strong> {{ asset.location|default:"—" }}</p>
+    <p><strong>Vendor:</strong> {{ asset.vendor|default:"—" }}</p>
+    <p><strong>Warranty:</strong> {{ asset.warranty_start|default:"—" }} to {{ asset.warranty_end|default:"—" }}</p>
+</div>
+
+<div class="card">
+    <h3>Issue History</h3>
+    <table>
+        <tr><th>Issued To</th><th>Date</th><th>Condition</th><th>Action</th></tr>
+        {% for issue in issues %}
+        <tr>
+            <td>{{ issue.issued_to }}</td>
+            <td>{{ issue.issue_date }}</td>
+            <td>{{ issue.condition }}</td>
+            <td>
+                {% if not issue.return_record %}
+                <a href="{% url 'it_assets:return_create' issue.pk %}">Record Return</a>
+                {% else %}
+                Returned {{ issue.return_record.return_date }}
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No issue history.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h3>Transfer History</h3>
+    <table>
+        <tr><th>From</th><th>To</th><th>Date</th></tr>
+        {% for t in transfers %}
+        <tr><td>{{ t.from_user|default:t.from_department }}</td><td>{{ t.to_user|default:t.to_department }}</td><td>{{ t.transfer_date }}</td></tr>
+        {% empty %}
+        <tr><td colspan="3">No transfers.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h3>Fault Reports</h3>
+    <p><a class="btn" href="{% url 'it_assets:fault_report_create' %}?asset={{ asset.pk }}">+ Report Fault</a></p>
+    <table>
+        <tr><th>Date</th><th>Priority</th><th>Status</th><th>Description</th></tr>
+        {% for f in fault_reports %}
+        <tr>
+            <td><a href="{% url 'it_assets:fault_report_detail' f.pk %}">{{ f.reported_date }}</a></td>
+            <td>{{ f.get_priority_display }}</td>
+            <td><span class="status-badge">{{ f.get_status_display }}</span></td>
+            <td>{{ f.problem_description }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No fault reports.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

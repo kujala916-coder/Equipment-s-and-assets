@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}IT Equipment & Stores{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; color: #222; }
+        nav { background: #1f2937; padding: 12px 24px; }
+        nav a { color: #fff; margin-right: 18px; text-decoration: none; font-size: 14px; }
+        nav a:hover { text-decoration: underline; }
+        .container { padding: 24px; max-width: 1100px; margin: 0 auto; }
+        table { width: 100%; border-collapse: collapse; background: #fff; }
+        th, td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; font-size: 14px; }
+        th { background: #f3f4f6; }
+        .card { background: #fff; padding: 16px; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+        .stats { display: flex; gap: 16px; flex-wrap: wrap; }
+        .stat { flex: 1; min-width: 140px; background: #fff; padding: 16px; border-radius: 8px; }
+        .stat .num { font-size: 28px; font-weight: bold; }
+        .stat .label { font-size: 13px; color: #666; }
+        .btn { display: inline-block; background: #2563eb; color: #fff; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-size: 14px; border: none; cursor: pointer; }
+        .messages { list-style: none; padding: 0; }
+        .messages li { background: #d1fae5; padding: 10px 14px; border-radius: 6px; margin-bottom: 10px; font-size: 14px; }
+        form p { margin: 10px 0; }
+        input, select, textarea { padding: 6px; width: 100%; max-width: 400px; box-sizing: border-box; }
+        .status-badge { padding: 2px 8px; border-radius: 10px; font-size: 12px; background: #e5e7eb; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'it_assets:dashboard' %}">Dashboard</a>
+        <a href="{% url 'it_assets:asset_list' %}">Assets</a>
+        <a href="{% url 'it_assets:category_list' %}">Categories</a>
+        <a href="{% url 'it_assets:stock_list' %}">Stock</a>
+        <a href="{% url 'it_assets:issue_list' %}">Issues</a>
+        <a href="{% url 'it_assets:fault_report_list' %}">Faults</a>
+        <a href="{% url 'it_assets:verification_list' %}">Verification</a>
+        <a href="{% url 'it_assets:goods_receipt_create' %}">New Receipt</a>
+        <a href="{% url 'it_assets:transfer_create' %}">Transfer Asset</a>
+    </nav>
+    <div class="container">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

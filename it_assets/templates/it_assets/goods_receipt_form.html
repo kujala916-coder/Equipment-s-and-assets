@@ -1,0 +1,9 @@
+{% extends "it_assets/base.html" %}
+{% block content %}
+<h2>New Goods Receipt</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Save</button>
+</form>
+{% endblock %}

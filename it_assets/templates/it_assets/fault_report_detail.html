@@ -1,0 +1,31 @@
+{% extends "it_assets/base.html" %}
+{% block content %}
+<h2>Fault Report: {{ fault.asset.asset_id }}</h2>
+
+<div class="card">
+    <p><strong>Priority:</strong> {{ fault.get_priority_display }}</p>
+    <p><strong>Status:</strong> <span class="status-badge">{{ fault.get_status_display }}</span></p>
+    <p><strong>Reported By:</strong> {{ fault.reported_by }}</p>
+    <p><strong>Reported Date:</strong> {{ fault.reported_date }}</p>
+    <p><strong>Description:</strong> {{ fault.problem_description }}</p>
+</div>
+
+<div class="card">
+    <h3>Repair Records</h3>
+    <p><a class="btn" href="{% url 'it_assets:repair_record_create' fault.pk %}">+ Add Repair Record</a></p>
+    <table>
+        <tr><th>Status</th><th>Technician</th><th>Test Result</th><th>Cost</th><th>Action</th></tr>
+        {% for r in repairs %}
+        <tr>
+            <td><span class="status-badge">{{ r.get_status_display }}</span></td>
+            <td>{{ r.technician_assigned|default:"—" }}</td>
+            <td>{{ r.get_test_result_display|default:"—" }}</td>
+            <td>{{ r.repair_cost|default:"—" }}</td>
+            <td><a href="{% url 'it_assets:repair_record_update' r.pk %}">Update</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No repair records yet.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

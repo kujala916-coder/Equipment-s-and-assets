@@ -1,0 +1,30 @@
+{% extends "it_assets/base.html" %}
+{% block title %}Assets{% endblock %}
+{% block content %}
+<h2>Assets</h2>
+<p><a class="btn" href="{% url 'it_assets:asset_create' %}">+ Register New Asset</a></p>
+
+<form method="get" style="margin-bottom: 14px;">
+    <select name="status" onchange="this.form.submit()">
+        <option value="">All statuses</option>
+        {% for value, label in status_choices %}
+        <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<table>
+    <tr><th>Asset ID</th><th>Category</th><th>Brand/Model</th><th>Status</th><th>Assigned To</th></tr>
+    {% for asset in assets %}
+    <tr>
+        <td><a href="{% url 'it_assets:asset_detail' asset.pk %}">{{ asset.asset_id }}</a></td>
+        <td>{{ asset.category.name }}</td>
+        <td>{{ asset.brand }} {{ asset.model }}</td>
+        <td><span class="status-badge">{{ asset.get_status_display }}</span></td>
+        <td>{{ asset.assigned_to|default:"—" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No assets found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

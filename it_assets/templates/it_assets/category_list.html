@@ -1,0 +1,13 @@
+{% extends "it_assets/base.html" %}
+{% block content %}
+<h2>Asset Categories</h2>
+<p><a class="btn" href="{% url 'it_assets:category_create' %}">+ New Category</a></p>
+<table>
+    <tr><th>Name</th><th>Code Prefix</th><th>Parent</th><th>Active</th></tr>
+    {% for c in categories %}
+    <tr><td>{{ c.name }}</td><td>{{ c.code_prefix }}</td><td>{{ c.parent|default:"—" }}</td><td>{{ c.is_active }}</td></tr>
+    {% empty %}
+    <tr><td colspan="4">No categories yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

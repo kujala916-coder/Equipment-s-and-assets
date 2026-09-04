@@ -1,0 +1,18 @@
+{% extends "it_assets/base.html" %}
+{% block content %}
+<h2>Inventory Verifications</h2>
+<p><a class="btn" href="{% url 'it_assets:verification_create' %}">+ Start New Verification</a></p>
+<table>
+    <tr><th>ID</th><th>Date</th><th>Conducted By</th><th>Status</th></tr>
+    {% for v in verifications %}
+    <tr>
+        <td><a href="{% url 'it_assets:verification_detail' v.pk %}">#{{ v.id }}</a></td>
+        <td>{{ v.verification_date }}</td>
+        <td>{{ v.conducted_by }}</td>
+        <td><span class="status-badge">{{ v.get_status_display }}</span></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">No verification sessions yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "it_assets/base.html" %}
+{% block content %}
+<h2>Equipment Issues</h2>
+<p><a class="btn" href="{% url 'it_assets:issue_create' %}">+ New Issue</a></p>
+<table>
+    <tr><th>Item</th><th>Issued To</th><th>Date</th><th>Status</th></tr>
+    {% for issue in issues %}
+    <tr>
+        <td>{% if issue.asset %}{{ issue.asset.asset_id }}{% else %}{{ issue.stock_item.name }}{% endif %}</td>
+        <td>{{ issue.issued_to }}</td>
+        <td>{{ issue.issue_date }}</td>
+        <td>
+            {% if issue.return_record %}Returned{% else %}
+            <a href="{% url 'it_assets:return_create' issue.pk %}">Record Return</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">No issues yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

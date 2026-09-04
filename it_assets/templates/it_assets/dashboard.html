@@ -1,0 +1,26 @@
+{% extends "it_assets/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Dashboard</h2>
+<div class="stats">
+    <div class="stat"><div class="num">{{ total_assets }}</div><div class="label">Total Assets</div></div>
+    <div class="stat"><div class="num">{{ assets_in_stock }}</div><div class="label">In Stock</div></div>
+    <div class="stat"><div class="num">{{ assets_assigned }}</div><div class="label">Assigned</div></div>
+    <div class="stat"><div class="num">{{ assets_under_repair }}</div><div class="label">Under Repair</div></div>
+    <div class="stat"><div class="num">{{ open_faults }}</div><div class="label">Open Faults</div></div>
+</div>
+
+<div class="card">
+    <h3>Stock Items Needing Reorder</h3>
+    {% if low_stock_items %}
+    <table>
+        <tr><th>Name</th><th>Available</th><th>Reorder Level</th></tr>
+        {% for item in low_stock_items %}
+        <tr><td>{{ item.name }}</td><td>{{ item.quantity_available }}</td><td>{{ item.reorder_level }}</td></tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No items currently below reorder level.</p>
+    {% endif %}
+</div>
+{% endblock %}

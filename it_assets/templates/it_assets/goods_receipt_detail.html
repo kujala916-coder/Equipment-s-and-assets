@@ -1,0 +1,21 @@
+{% extends "it_assets/base.html" %}
+{% block content %}
+<h2>Goods Receipt: {{ receipt.grn_number }}</h2>
+<p><strong>Vendor:</strong> {{ receipt.vendor.name }} | <strong>Delivery Date:</strong> {{ receipt.delivery_date }}</p>
+<p><a class="btn" href="{% url 'it_assets:goods_receipt_add_item' receipt.pk %}">+ Add Item</a></p>
+
+<table>
+    <tr><th>Description</th><th>Category</th><th>Accepted</th><th>Rejected</th><th>Serialized</th></tr>
+    {% for item in items %}
+    <tr>
+        <td>{{ item.description }}</td>
+        <td>{{ item.category.name }}</td>
+        <td>{{ item.quantity_accepted }}</td>
+        <td>{{ item.quantity_rejected }}</td>
+        <td>{% if item.is_serialized %}Yes{% else %}No{% endif %}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No items added yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "it_assets/base.html" %}
+{% block content %}
+<h2>Verification #{{ verification.id }}</h2>
+<p><strong>Status:</strong> <span class="status-badge">{{ verification.get_status_display }}</span> |
+   <strong>Conducted By:</strong> {{ verification.conducted_by }} |
+   <strong>Date:</strong> {{ verification.verification_date }}</p>
+
+{% if verification.status != "COMPLETED" %}
+<p>
+    <a class="btn" href="{% url 'it_assets:verification_complete' verification.pk %}"
+       onclick="return confirm('Mark this verification as completed?');">Mark as Completed</a>
+</p>
+{% endif %}
+
+<div class="card">
+    <h3>Checked Items</h3>
+    <p><a class="btn" href="{% url 'it_assets:verification_add_item' verification.pk %}">+ Add Checked Item</a></p>
+    <table>
+        <tr><th>Item</th><th>Expected Qty</th><th>Physical Qty</th><th>Found Status</th><th>Remarks</th></tr>
+        {% for item in items %}
+        <tr>
+            <td>{% if item.asset %}{{ item.asset.asset_id }}{% else %}{{ item.stock_item.name }}{% endif %}</td>
+            <td>{{ item.expected_quantity|default:"—" }}</td>
+            <td>{{ item.physical_quantity|default:"—" }}</td>
+            <td><span class="status-badge">{{ item.get_found_status_display }}</span></td>
+            <td>{{ item.remarks }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No items checked yet.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h3>Reconciliations (Stock Discrepancies)</h3>
+    <p><a class="btn" href="{% url 'it_assets:verification_add_reconciliation' verification.pk %}">+ Add Reconciliation</a></p>
+    <table>
+        <tr><th>Stock Item</th><th>System Qty</th><th>Physical Qty</th><th>Difference</th><th>Status</th></tr>
+        {% for r in reconciliations %}
+        <tr>
+            <td>{{ r.stock_item.name }}</td>
+            <td>{{ r.system_quantity }}</td>
+            <td>{{ r.physical_quantity }}</td>
+            <td>{{ r.difference }}</td>
+            <td><span class="status-badge">{{ r.get_status_display }}</span></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No reconciliations recorded.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
