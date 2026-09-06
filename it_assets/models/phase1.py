@@ -30,20 +30,9 @@ class AssetCategory(models.Model):
 
 
 # ---------------------------------------------------------------------------
-# 1.2  Vendor (lightweight — coordinate with teammate's Phase 2 Vendor model)
+# 1.2  Vendor lives in the `vendors` app (shared with Procurement/Contracts).
+# See vendors.models.Vendor — referenced below by string reference.
 # ---------------------------------------------------------------------------
-class Vendor(models.Model):
-    name = models.CharField(max_length=150)
-    contact_person = models.CharField(max_length=100, blank=True)
-    phone = models.CharField(max_length=20, blank=True)
-    email = models.EmailField(blank=True)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
 
 
 # ---------------------------------------------------------------------------
@@ -68,7 +57,7 @@ class Asset(models.Model):
     brand = models.CharField(max_length=100, blank=True)
     model = models.CharField(max_length=100, blank=True)
     serial_number = models.CharField(max_length=100, unique=True)
-    vendor = models.ForeignKey(Vendor, null=True, blank=True, on_delete=models.SET_NULL)
+    vendor = models.ForeignKey('vendors.Vendor', null=True, blank=True, on_delete=models.SET_NULL)
 
     purchase_date = models.DateField(null=True, blank=True)
     cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
@@ -147,7 +136,7 @@ class StockItem(models.Model):
 # ---------------------------------------------------------------------------
 class GoodsReceipt(models.Model):
     grn_number = models.CharField(max_length=30, unique=True, editable=False)
-    vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT, related_name="goods_receipts")
+    vendor = models.ForeignKey('vendors.Vendor', on_delete=models.PROTECT, related_name="goods_receipts")
     po_reference = models.CharField(max_length=50, blank=True)
     delivery_date = models.DateField()
     received_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="+")

@@ -1,0 +1,311 @@
+{% extends "procurement/base.html" %}
+
+{% block content %}
+
+<div class="form-wrapper">
+
+    <div class="form-card">
+
+        <div class="form-header">
+            <h2>{{ form_title }}</h2>
+            <p>Enter the required procurement information below.</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+
+                <div class="form-group">
+
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                            <span class="required">*</span>
+                        {% endif %}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <div class="help-text">
+                            {{ field.help_text }}
+                        </div>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <div class="field-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            {% endfor %}
+
+            {% for error in form.non_field_errors %}
+                <div class="form-error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+            <div class="form-actions">
+                <button type="submit" class="save-button">
+                    Save
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* Main form area */
+    .form-wrapper {
+        width: 100%;
+        max-width: 1050px;
+        margin: 40px auto 60px auto;
+        padding: 0 25px;
+    }
+
+
+    /* Main white card */
+    .form-card {
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid #dfe3e8;
+        border-radius: 10px;
+        padding: 38px 45px 40px 45px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    }
+
+
+    /* Form heading */
+    .form-header {
+        margin-bottom: 32px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .form-header h2 {
+        margin: 0;
+        color: #1f2937;
+        font-size: 26px;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .form-header p {
+        margin: 8px 0 0 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+
+    /* Individual fields */
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+
+    /* Labels */
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #26384d;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .required {
+        color: #b42318;
+        margin-left: 3px;
+    }
+
+
+    /* Inputs, dropdowns and text areas */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+
+        min-height: 44px;
+
+        padding: 10px 13px;
+
+        background: #ffffff;
+        border: 1px solid #cbd2d9;
+        border-radius: 6px;
+
+        color: #1f2937;
+        font-family: inherit;
+        font-size: 14px;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+
+    /* Text areas */
+    .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+
+    /* Focus effect */
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+
+        border-color: #52606d;
+
+        box-shadow:
+            0 0 0 3px rgba(82, 96, 109, 0.12);
+    }
+
+
+    /* Date fields */
+    .form-group input[type="date"] {
+        min-height: 44px;
+    }
+
+
+    /* Number fields */
+    .form-group input[type="number"] {
+        min-height: 44px;
+    }
+
+
+    /* Checkbox */
+    .form-group input[type="checkbox"] {
+        width: auto;
+        min-height: auto;
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+
+    /* Help text */
+    .help-text {
+        margin-top: 6px;
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+
+    /* Field errors */
+    .field-error {
+        margin-top: 6px;
+        color: #b42318;
+        font-size: 13px;
+    }
+
+
+    /* General form error */
+    .form-error {
+        margin-bottom: 20px;
+        padding: 12px 15px;
+
+        background: #fff4f2;
+        border: 1px solid #f0b7b2;
+        border-radius: 6px;
+
+        color: #b42318;
+        font-size: 13px;
+    }
+
+
+    /* Bottom section */
+    .form-actions {
+        margin-top: 34px;
+        padding-top: 24px;
+
+        border-top: 1px solid #e5e7eb;
+
+        display: flex;
+        justify-content: flex-end;
+    }
+
+
+    /* Save button */
+    .save-button {
+        min-width: 110px;
+
+        padding: 11px 25px;
+
+        background: #1f2733;
+        color: #ffffff;
+
+        border: none;
+        border-radius: 6px;
+
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition:
+            background 0.2s ease,
+            transform 0.1s ease;
+    }
+
+    .save-button:hover {
+        background: #303b4a;
+    }
+
+    .save-button:active {
+        transform: translateY(1px);
+    }
+
+
+    /* Responsive */
+    @media (max-width: 800px) {
+
+        .form-wrapper {
+            margin-top: 25px;
+            padding: 0 15px;
+        }
+
+        .form-card {
+            padding: 28px 25px 30px 25px;
+        }
+
+        .form-header h2 {
+            font-size: 23px;
+        }
+    }
+
+
+    @media (max-width: 500px) {
+
+        .form-card {
+            padding: 22px 18px 25px 18px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-actions {
+            justify-content: stretch;
+        }
+
+        .save-button {
+            width: 100%;
+        }
+    }
+
+</style>
+
+{% endblock %}

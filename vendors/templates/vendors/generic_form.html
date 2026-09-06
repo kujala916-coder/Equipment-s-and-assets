@@ -1,0 +1,210 @@
+{% extends "vendors/base.html" %}
+
+{% block content %}
+
+<div class="form-wrapper">
+    <div class="form-card">
+
+    <div class="form-header">
+        <h2>{{ form_title }}</h2>
+        <p>Please fill in the information below.</p>
+    </div>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-group">
+
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <div class="help-text">
+                        {{ field.help_text }}
+                    </div>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <div class="field-error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% endfor %}
+
+        {% for error in form.non_field_errors %}
+            <div class="form-error">
+                {{ error }}
+            </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <button type="submit" class="save-button">
+                Save
+            </button>
+        </div>
+
+    </form>
+
+</div>
+```
+
+</div>
+
+<style>
+    .form-wrapper {
+        width: 100%;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 25px;
+        box-sizing: border-box;
+    }
+
+    .form-card {
+        background: #ffffff;
+        border: 1px solid #e1e5e9;
+        border-radius: 10px;
+        padding: 35px 40px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .form-header {
+        margin-bottom: 30px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .form-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .form-header p {
+        margin: 7px 0 0;
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 13px;
+        border: 1px solid #cfd5dc;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #1f2937;
+        font-size: 14px;
+        font-family: inherit;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-group input,
+    .form-group select {
+        min-height: 42px;
+    }
+
+    .form-group textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #52606d;
+        box-shadow: 0 0 0 3px rgba(82, 96, 109, 0.12);
+    }
+
+    .form-group input[type="checkbox"] {
+        width: auto;
+        min-height: auto;
+        margin-right: 8px;
+    }
+
+    .help-text {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+    .field-error {
+        margin-top: 6px;
+        font-size: 13px;
+        color: #b42318;
+    }
+
+    .form-error {
+        margin-bottom: 20px;
+        padding: 12px 14px;
+        border: 1px solid #f0b7b2;
+        border-radius: 6px;
+        background: #fff4f2;
+        color: #b42318;
+        font-size: 13px;
+    }
+
+    .form-actions {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .save-button {
+        padding: 11px 25px;
+        border: none;
+        border-radius: 6px;
+        background: #1f2733;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .save-button:hover {
+        background: #303b4a;
+    }
+
+    .save-button:active {
+        transform: translateY(1px);
+    }
+
+    @media (max-width: 700px) {
+        .form-wrapper {
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        .form-card {
+            padding: 25px 20px;
+        }
+
+        .form-header h2 {
+            font-size: 21px;
+        }
+    }
+</style>
+
+{% endblock %}

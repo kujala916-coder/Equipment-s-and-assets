@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (
-    AssetCategory, Vendor, Asset, StockItem,
+    AssetCategory, Asset, StockItem,
     GoodsReceipt, GoodsReceiptItem, StockTransaction,
     EquipmentIssue, EquipmentReturn, AssetTransfer,
     FaultReport, RepairRecord, Warranty, WarrantyClaim,
@@ -42,7 +42,6 @@ class InventoryVerificationAdmin(admin.ModelAdmin):
 
 # Simple registration for the rest — list/detail views can be customised later
 admin.site.register(AssetCategory)
-admin.site.register(Vendor)
 admin.site.register(GoodsReceipt)
 admin.site.register(GoodsReceiptItem)
 admin.site.register(StockTransaction)

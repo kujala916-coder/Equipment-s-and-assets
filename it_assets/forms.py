@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import (
-    Asset, AssetCategory, Vendor, StockItem,
+    Asset, AssetCategory, StockItem,
     GoodsReceipt, GoodsReceiptItem,
     EquipmentIssue, EquipmentReturn, AssetTransfer,
     FaultReport, RepairRecord,
@@ -28,12 +28,6 @@ class AssetCategoryForm(forms.ModelForm):
     class Meta:
         model = AssetCategory
         fields = ["name", "parent", "code_prefix", "description", "is_active"]
-
-
-class VendorForm(forms.ModelForm):
-    class Meta:
-        model = Vendor
-        fields = ["name", "contact_person", "phone", "email", "is_active"]
 
 
 class StockItemForm(forms.ModelForm):

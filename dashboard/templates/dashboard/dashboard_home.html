@@ -1,0 +1,44 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<div class="page-title">Dashboard</div>
+
+<div class="stat-strip">
+    <div class="stat-box">
+        <div class="stat-number">{{ total_vendors }}</div>
+        <div class="stat-label">Total Vendors</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">{{ total_procurements }}</div>
+        <div class="stat-label">Total Procurements</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">{{ total_contracts }}</div>
+        <div class="stat-label">Total Contracts</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">{{ active_contracts }}</div>
+        <div class="stat-label">Active Contracts</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">{{ open_vendor_issues }}</div>
+        <div class="stat-label">Open Vendor Issues</div>
+    </div>
+</div>
+
+<div class="panel">
+    <h3>Recent Notifications</h3>
+    {% if recent_notifications %}
+        {% for notification in recent_notifications %}
+            <div class="link-row">
+                <a href="{% url 'notifications:notification_list' %}">
+                    {{ notification.title }}
+                    {% if not notification.is_read %}<strong></strong>{% endif %}
+                </a>
+                <small style="color:#9ca3af;">{{ notification.created_at|date:"M d, Y" }}</small>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="color:#9ca3af;">No recent notifications.</p>
+    {% endif %}
+</div>
+{% endblock %}

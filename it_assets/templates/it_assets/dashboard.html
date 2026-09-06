@@ -2,6 +2,8 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <h2>Dashboard</h2>
+
+<h3 style="margin-top:0;">Assets & Store</h3>
 <div class="stats">
     <div class="stat"><div class="num">{{ total_assets }}</div><div class="label">Total Assets</div></div>
     <div class="stat"><div class="num">{{ assets_in_stock }}</div><div class="label">In Stock</div></div>
@@ -9,6 +11,25 @@
     <div class="stat"><div class="num">{{ assets_under_repair }}</div><div class="label">Under Repair</div></div>
     <div class="stat"><div class="num">{{ open_faults }}</div><div class="label">Open Faults</div></div>
 </div>
+
+{% if total_vendors is not None or pending_requisitions is not None or active_contracts is not None %}
+<h3>Vendors, Procurement & Contracts</h3>
+<div class="stats">
+    {% if total_vendors is not None %}
+    <div class="stat"><div class="num">{{ total_vendors }}</div><div class="label">Total Vendors</div></div>
+    <div class="stat"><div class="num">{{ active_vendors }}</div><div class="label">Active Vendors</div></div>
+    <div class="stat"><div class="num">{{ open_vendor_issues }}</div><div class="label">Open Vendor Issues</div></div>
+    {% endif %}
+    {% if pending_requisitions is not None %}
+    <div class="stat"><div class="num">{{ pending_requisitions }}</div><div class="label">Pending Requisitions</div></div>
+    <div class="stat"><div class="num">{{ procurements_in_progress }}</div><div class="label">Procurements In Progress</div></div>
+    {% endif %}
+    {% if active_contracts is not None %}
+    <div class="stat"><div class="num">{{ active_contracts }}</div><div class="label">Active Contracts</div></div>
+    <div class="stat"><div class="num">{{ contracts_expiring_soon }}</div><div class="label">Contracts Expiring Soon</div></div>
+    {% endif %}
+</div>
+{% endif %}
 
 <div class="card">
     <h3>Stock Items Needing Reorder</h3>
@@ -23,4 +44,48 @@
     <p>No items currently below reorder level.</p>
     {% endif %}
 </div>
+
+{% if recent_notifications is not None %}
+<div class="card">
+    <h3>Recent Notifications</h3>
+    {% if recent_notifications %}
+    <table>
+        <tr><th>Title</th><th>Type</th><th>Priority</th><th>When</th></tr>
+        {% for n in recent_notifications %}
+        <tr>
+            <td>{{ n.title }}</td>
+            <td><span class="status-badge">{{ n.get_notification_type_display }}</span></td>
+            <td>{{ n.get_priority_display }}</td>
+            <td>{{ n.created_at|date:"d M, H:i" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No notifications yet.</p>
+    {% endif %}
+    <p><a href="{% url 'notifications:notification_list' %}">View all notifications →</a></p>
+</div>
+{% endif %}
+
+{% if recent_audit_logs is not None %}
+<div class="card">
+    <h3>Recent Activity (Audit Log)</h3>
+    {% if recent_audit_logs %}
+    <table>
+        <tr><th>When</th><th>Actor</th><th>Action</th><th>Model</th></tr>
+        {% for log in recent_audit_logs %}
+        <tr>
+            <td>{{ log.timestamp|date:"d M, H:i" }}</td>
+            <td>{{ log.actor|default:"System" }}</td>
+            <td>{{ log.get_action_display }}</td>
+            <td>{{ log.model_name }} #{{ log.object_id }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No activity recorded yet.</p>
+    {% endif %}
+    <p><a href="{% url 'audit:audit_log_list' %}">View full audit log →</a></p>
+</div>
+{% endif %}
 {% endblock %}

@@ -1,0 +1,104 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="page-wrap-notifications">
+
+    <div class="page-title">Notifications</div>
+
+    {% if notifications %}
+        <div class="notification-list">
+            {% for note in notifications %}
+                <div class="notification-item priority-{{ note.priority }}">
+                    <div class="notification-top">
+                        {% if note.related_url %}
+                            <a href="{{ note.related_url }}" class="notification-title">{{ note.title }}</a>
+                        {% else %}
+                            <span class="notification-title">{{ note.title }}</span>
+                        {% endif %}
+                        <span class="priority-badge">{{ note.get_priority_display }}</span>
+                    </div>
+                    <p class="notification-message">{{ note.message }}</p>
+                    <div class="notification-date">{{ note.created_at|date:"d M Y, h:i A" }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-state">You have no notifications.</p>
+    {% endif %}
+
+</div>
+
+<style>
+    .page-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+    }
+
+    .notification-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .notification-item {
+        background: #ffffff;
+        border-radius: 10px;
+        border-left: 5px solid #999;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        padding: 20px 24px;
+    }
+
+    .priority-low      { border-left-color: #6c757d; }
+    .priority-medium   { border-left-color: #2563eb; }
+    .priority-high     { border-left-color: #f59e0b; }
+    .priority-critical { border-left-color: #dc2626; }
+
+    .notification-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .notification-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #1f2937;
+        text-decoration: none;
+    }
+
+    a.notification-title:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    .priority-badge {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background: #f1f2f4;
+        color: #4b5563;
+        white-space: nowrap;
+    }
+
+    .notification-message {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #374151;
+        margin-bottom: 12px;
+    }
+
+    .notification-date {
+        font-size: 0.85rem;
+        color: #9ca3af;
+    }
+
+    .empty-state {
+        color: #6b7280;
+        font-size: 1rem;
+        padding: 20px 0;
+    }
+</style>
+{% endblock %}

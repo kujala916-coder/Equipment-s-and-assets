@@ -1,0 +1,84 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="page-wrap-audit">
+
+    <div class="page-title">Audit Trail</div>
+
+    <form method="get" class="audit-filters">
+        <select name="action">
+            <option value="">All actions</option>
+            {% for value, label in action_choices %}
+                <option value="{{ value }}" {% if value == selected_action %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="app_label">
+            <option value="">All modules</option>
+            <option value="assets" {% if selected_app == "assets" %}selected{% endif %}>Assets</option>
+            <option value="store" {% if selected_app == "store" %}selected{% endif %}>Store</option>
+            <option value="procurement" {% if selected_app == "procurement" %}selected{% endif %}>Procurement</option>
+            <option value="vendors" {% if selected_app == "vendors" %}selected{% endif %}>Vendors</option>
+            <option value="contracts" {% if selected_app == "contracts" %}selected{% endif %}>Contracts</option>
+        </select>
+
+        <input type="text" name="q" placeholder="Search by record (e.g. IT-LAP-000125)" value="{{ query }}">
+        <button type="submit">Filter</button>
+    </form>
+
+    {% if logs %}
+        <table class="audit-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Module</th>
+                    <th>Record</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.timestamp|date:"d-M-Y H:i" }}</td>
+                    <td>{{ log.actor_username|default:"System" }}</td>
+                    <td><span class="action-badge action-{{ log.action }}">{{ log.get_action_display }}</span></td>
+                    <td>{{ log.model_name }}</td>
+                    <td>{{ log.object_repr|default:log.object_id }}</td>
+                    <td>
+                        {% if log.changes %}
+                            <details>
+                                <summary>View</summary>
+                                <pre>{{ log.changes }}</pre>
+                            </details>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty-state">No audit records match these filters.</p>
+    {% endif %}
+
+</div>
+
+<style>
+    .page-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 24px; }
+    .audit-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .audit-filters select, .audit-filters input { padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; }
+    .audit-filters button { padding: 8px 16px; border: none; border-radius: 6px; background: #2563eb; color: #fff; cursor: pointer; }
+
+    .audit-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .audit-table th, .audit-table td { padding: 10px 14px; border-bottom: 1px solid #eee; text-align: left; font-size: 0.9rem; }
+    .audit-table th { background: #f4f5f7; font-weight: 600; }
+
+    .action-badge { padding: 2px 10px; border-radius: 12px; font-size: 0.78rem; color: #fff; }
+    .action-create { background: #16a34a; }
+    .action-update { background: #2563eb; }
+    .action-delete { background: #dc2626; }
+
+    .audit-table pre { white-space: pre-wrap; font-size: 0.8rem; background: #f8f9fa; padding: 8px; border-radius: 6px; }
+</style>
+{% endblock %}

@@ -6,7 +6,7 @@ Depends on: Asset, Vendor (from models_phase1.py)
 from django.conf import settings
 from django.db import models
 
-from .phase1 import Asset, Vendor
+from .phase1 import Asset
 
 
 # ---------------------------------------------------------------------------
@@ -70,7 +70,7 @@ class RepairRecord(models.Model):
     diagnosis = models.TextField(blank=True)
     warranty_checked = models.BooleanField(default=False)
     under_warranty = models.BooleanField(null=True, blank=True)
-    service_center_vendor = models.ForeignKey(Vendor, null=True, blank=True, on_delete=models.SET_NULL)
+    service_center_vendor = models.ForeignKey('vendors.Vendor', null=True, blank=True, on_delete=models.SET_NULL)
     repair_action = models.TextField(blank=True)
     repair_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     test_result = models.CharField(max_length=10, choices=TestResult.choices, blank=True)

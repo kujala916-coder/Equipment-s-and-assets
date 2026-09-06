@@ -36,6 +36,13 @@
         <a href="{% url 'it_assets:verification_list' %}">Verification</a>
         <a href="{% url 'it_assets:goods_receipt_create' %}">New Receipt</a>
         <a href="{% url 'it_assets:transfer_create' %}">Transfer Asset</a>
+        <span style="color:#6b7280;">|</span>
+        <a href="{% url 'vendors:vendor_list' %}">Vendors</a>
+        <a href="{% url 'procurement:procurement_list' %}">Procurement</a>
+        <a href="{% url 'contracts:contract_list' %}">Contracts</a>
+        <a href="{% url 'notifications:notification_list' %}">Notifications</a>
+        <a href="{% url 'audit:audit_log_list' %}">Audit Log</a>
+        <a href="{% url 'dashboard:dashboard_home' %}">Reports</a>
     </nav>
     <div class="container">
         {% if messages %}

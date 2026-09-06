@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import F
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+from datetime import timedelta
 
 from .models import (
     Asset, AssetCategory, StockItem,
@@ -11,7 +13,7 @@ from .models import (
     InventoryVerification, InventoryVerificationItem, InventoryReconciliation,
 )
 from .forms import (
-    AssetForm, AssetCategoryForm, VendorForm, StockItemForm,
+    AssetForm, AssetCategoryForm, StockItemForm,
     GoodsReceiptForm, GoodsReceiptItemForm,
     EquipmentIssueForm, EquipmentReturnForm, AssetTransferForm,
     FaultReportForm, RepairRecordForm,
@@ -20,18 +22,67 @@ from .forms import (
 
 
 # ---------------------------------------------------------------------------
-# Dashboard
+# Dashboard — combined view across all merged apps
 # ---------------------------------------------------------------------------
 @login_required
 def dashboard(request):
     context = {
+        # --- Asset & Store (Phase 1) ---
         "total_assets": Asset.objects.count(),
         "assets_in_stock": Asset.objects.filter(status=Asset.Status.IN_STOCK).count(),
         "assets_assigned": Asset.objects.filter(status=Asset.Status.ASSIGNED).count(),
         "assets_under_repair": Asset.objects.filter(status=Asset.Status.UNDER_REPAIR).count(),
         "low_stock_items": StockItem.objects.filter(quantity_available__lte=F("reorder_level")),
+        # --- Fault / Repair (Phase 3) ---
         "open_faults": FaultReport.objects.exclude(status=FaultReport.Status.CLOSED).count(),
     }
+
+    # --- Vendors (teammate's app) ---
+    try:
+        from vendors.models import Vendor, VendorIssue
+        context["total_vendors"] = Vendor.objects.count()
+        context["active_vendors"] = Vendor.objects.filter(status="active").count()
+        context["open_vendor_issues"] = VendorIssue.objects.filter(status__in=["open", "in_progress"]).count()
+    except Exception:
+        pass
+
+    # --- Procurement (teammate's app) ---
+    try:
+        from procurement.models import Requisition, Procurement
+        context["pending_requisitions"] = Requisition.objects.filter(status="pending").count()
+        context["procurements_in_progress"] = Procurement.objects.exclude(
+            status__in=["closed", "cancelled"]
+        ).count()
+    except Exception:
+        pass
+
+    # --- Contracts (teammate's app) ---
+    try:
+        from contracts.models import Contract
+        soon = timezone.now().date() + timedelta(days=30)
+        context["active_contracts"] = Contract.objects.filter(status="active").count()
+        context["contracts_expiring_soon"] = Contract.objects.filter(
+            status="active", end_date__lte=soon, end_date__gte=timezone.now().date()
+        ).count()
+    except Exception:
+        pass
+
+    # --- Notifications (teammate's app) ---
+    try:
+        from notifications.models import Notification
+        context["recent_notifications"] = Notification.objects.filter(
+            recipient=request.user
+        ).order_by("-created_at")[:5]
+    except Exception:
+        pass
+
+    # --- Audit Log (teammate's app) ---
+    try:
+        from audit.models import AuditLog
+        context["recent_audit_logs"] = AuditLog.objects.order_by("-timestamp")[:5]
+    except Exception:
+        pass
+
     return render(request, "it_assets/dashboard.html", context)
 
 

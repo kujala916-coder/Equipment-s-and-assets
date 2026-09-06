@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}IT Equipment SMS{% endblock %}</title>
+
+```
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: #f5f6f8;
+        color: #333;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    nav {
+        display: flex;
+        align-items: center;
+        height: 50px;
+        background: #1f2733;
+        padding: 0 20px;
+    }
+
+    nav a {
+        display: flex;
+        align-items: center;
+        height: 50px;
+        padding: 0 14px;
+        color: #d9dee5;
+        text-decoration: none;
+        font-size: 14px;
+        white-space: nowrap;
+        border-bottom: 2px solid transparent;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    nav a:hover {
+        background: #303b4a;
+        color: #ffffff;
+    }
+
+    nav a.active {
+        color: #ffffff;
+        border-bottom: 2px solid #ffffff;
+    }
+
+    .brand {
+        font-weight: 600;
+        color: #ffffff;
+        margin-right: 10px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px 25px;
+    }
+
+    .alert {
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    .alert-success {
+        background: #edf7ee;
+        border: 1px solid #b8d9bd;
+        color: #285c32;
+    }
+
+    /* Form styling */
+    .form-label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .form-control,
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #cfd5dc;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #333;
+        font-size: 14px;
+        font-family: inherit;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #52606d;
+        box-shadow: 0 0 0 3px rgba(82, 96, 109, 0.12);
+    }
+
+    textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .btn-primary {
+        display: inline-block;
+        padding: 10px 22px;
+        border: none;
+        border-radius: 6px;
+        background: #1f2733;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background: #303b4a;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<nav>
+    <a class="brand" href="/">IT Eqp SMS</a>
+
+    <a href="{% url 'dashboard:dashboard_home' %}">
+        Dashboard
+    </a>
+
+    <a href="{% url 'procurement:plan_list' %}">
+        Plan
+    </a>
+
+    <a href="{% url 'procurement:requirement_list' %}">
+        Requirement
+    </a>
+
+    <a href="{% url 'procurement:requisition_list' %}">
+        Requisition
+    </a>
+
+    <a href="{% url 'procurement:procurement_list' %}">
+        Procurement
+    </a>
+
+    <a href="{% url 'procurement:procurement_item_list' %}">
+        Item
+    </a>
+
+    <a href="{% url 'procurement:specification_list' %}">
+        Specification
+    </a>
+
+    <a href="{% url 'procurement:evaluation_list' %}">
+        Evaluation
+    </a>
+
+    <a href="{% url 'procurement:evaluation_item_list' %}">
+        Eval. Item
+    </a>
+        <a href="{% url 'it_assets:dashboard' %}" style="margin-left:auto; color:#93c5fd;">&larr; IT Assets App</a>
+    </nav>
+
+<div class="container">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+</div>
+```
+
+</body>
+</html>
