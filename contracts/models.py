@@ -57,3 +57,24 @@ class License(models.Model):
 
     def __str__(self):
         return f"{self.software_name} ({self.contract.title})"
+
+class SLA(models.Model):
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('expired', 'Expired'),
+        ('renewed', 'Renewed'),
+    ]
+
+    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, related_name='slas')
+    title = models.CharField(max_length=255)
+    response_time_hours = models.PositiveIntegerField(help_text="Max hours to first respond to an issue")
+    resolution_time_hours = models.PositiveIntegerField(help_text="Max hours to resolve an issue")
+    uptime_guarantee_percent = models.DecimalField(max_digits=5, decimal_places=2, help_text="e.g. 99.9")
+    start_date = models.DateField()
+    end_date = models.DateField(help_text="Acts as the renewal date when this SLA is renewed")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    notes = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.vendor})"

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Contract, ContractRenewal, License
+from .models import Contract, ContractRenewal, License, SLA
 
 
 class BootstrapModelForm(forms.ModelForm):
@@ -42,4 +42,14 @@ class LicenseForm(BootstrapModelForm):
         fields = ['contract', 'software_name', 'license_key', 'seats', 'assigned_to', 'expiry_date']
         widgets = {
             'expiry_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class SLAForm(BootstrapModelForm):
+    class Meta:
+        model = SLA
+        fields = ['vendor', 'title', 'response_time_hours', 'resolution_time_hours',
+                  'uptime_guarantee_percent', 'start_date', 'end_date', 'status', 'notes']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
         }
