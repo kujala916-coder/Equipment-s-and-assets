@@ -20,44 +20,39 @@ class BootstrapModelForm(forms.ModelForm):
 class ProcurementPlanForm(BootstrapModelForm):
     class Meta:
         model = ProcurementPlan
-        fields = ['title', 'period_type', 'fiscal_year', 'start_date',
-                  'end_date', 'total_budget', 'approved']
-        widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
-            'end_date': forms.DateInput(attrs={'type': 'date'}),
-        }
+        fields = ['title', 'period_type', 'fiscal_year', 'total_budget', 'justification']
 
 
 class ProcurementRequirementForm(BootstrapModelForm):
     class Meta:
         model = ProcurementRequirement
-        fields = ['plan', 'item_name', 'category', 'quantity',
-                  'estimated_unit_cost', 'justification']
+        fields = ['plan', 'item_name', 'category', 'quantity']
 
 
 class RequisitionForm(BootstrapModelForm):
     class Meta:
         model = Requisition
-        fields = ['requirement', 'status', 'approved_by', 'remarks']
+        fields = ['requirement', 'approved_by', 'approval_date', 'remarks']
+        widgets = {
+            'approval_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
 
 
 class ProcurementForm(BootstrapModelForm):
     class Meta:
         model = Procurement
         fields = ['requisition', 'vendor', 'tender_number', 'po_number',
-                  'tender_date', 'po_date', 'expected_delivery_date',
-                  'actual_delivery_date', 'total_value', 'status']
+                  'tender_publishing_date', 'total_value']
         widgets = {
-            'tender_date': forms.DateInput(attrs={'type': 'date'}),
-            'po_date': forms.DateInput(attrs={'type': 'date'}),
-            'expected_delivery_date': forms.DateInput(attrs={'type': 'date'}),
-            'actual_delivery_date': forms.DateInput(attrs={'type': 'date'}),
+            'tender_publishing_date': forms.DateInput(attrs={'type': 'date'}),
         }
 
 
 class ProcurementItemForm(BootstrapModelForm):
     class Meta:
         model = ProcurementItem
+        # total_price is computed automatically in ProcurementItem.save(),
+        # so it's deliberately left out of the form.
         fields = ['procurement', 'item_name', 'category', 'quantity', 'unit_price']
 
 
@@ -70,6 +65,7 @@ class TechnicalSpecificationForm(BootstrapModelForm):
 class TechnicalEvaluationForm(BootstrapModelForm):
     class Meta:
         model = TechnicalEvaluation
+        # evaluated_by and evaluation_date are set automatically in the view.
         fields = ['procurement', 'vendor', 'overall_result', 'remarks']
 
 

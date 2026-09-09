@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>{% block title %}IT Equipment SMS{% endblock %}</title>
 
-```
+
 <style>
     * {
         box-sizing: border-box;
@@ -127,13 +127,13 @@
         background: #303b4a;
     }
 </style>
-```
+
 
 </head>
 
 <body>
 
-```
+
 <nav>
     <a class="brand" href="/">IT Eqp SMS</a>
 
@@ -172,8 +172,7 @@
     <a href="{% url 'procurement:evaluation_item_list' %}">
         Eval. Item
     </a>
-        <a href="{% url 'it_assets:dashboard' %}" style="margin-left:auto; color:#93c5fd;">&larr; IT Assets App</a>
-    </nav>
+</nav>
 
 <div class="container">
 
@@ -188,7 +187,7 @@
     {% block content %}{% endblock %}
 
 </div>
-```
+
 
 </body>
 </html>

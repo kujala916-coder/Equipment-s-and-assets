@@ -11,12 +11,9 @@ class ProcurementPlan(models.Model):
     title = models.CharField(max_length=255)
     period_type = models.CharField(max_length=20, choices=PERIOD_CHOICES)
     fiscal_year = models.CharField(max_length=20)
-    start_date = models.DateField()
-    end_date = models.DateField()
     total_budget = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
-    approved = models.BooleanField(default=False)
-    created_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    justification = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.title} ({self.fiscal_year})"
@@ -27,8 +24,7 @@ class ProcurementRequirement(models.Model):
     item_name = models.CharField(max_length=255)
     category = models.ForeignKey('it_assets.AssetCategory', on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.PositiveIntegerField()
-    estimated_unit_cost = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    justification = models.TextField(blank=True, null=True)
+  
 
     def __str__(self):
         return f"{self.item_name} x{self.quantity}"
@@ -42,15 +38,12 @@ class Requisition(models.Model):
     ]
 
     requirement = models.ForeignKey(ProcurementRequirement, on_delete=models.CASCADE, related_name='requisitions')
-    requested_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL, null=True)
-    requested_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     approved_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL, null=True, related_name='approved_requisitions', blank=True)
     approval_date = models.DateTimeField(blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return f"Requisition #{self.id} - {self.status}"
+def __str__(self):
+    return f"Requisition #{self.id} for {self.requirement}"
 
 
 class Procurement(models.Model):
@@ -68,14 +61,9 @@ class Procurement(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True, related_name='procurements')
     tender_number = models.CharField(max_length=100, blank=True, null=True)
     po_number = models.CharField(max_length=100, blank=True, null=True)
-    tender_date = models.DateField(blank=True, null=True)
-    po_date = models.DateField(blank=True, null=True)
-    expected_delivery_date = models.DateField(blank=True, null=True)
-    actual_delivery_date = models.DateField(blank=True, null=True)
+    tender_publishing_date = models.DateField(blank=True, null=True)
     total_value = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Procurement {self.po_number or self.tender_number or self.id}"

@@ -11,10 +11,7 @@ def plan_list(request):
     if request.method == 'POST':
         form = ProcurementPlanForm(request.POST)
         if form.is_valid():
-            plan = form.save(commit=False)
-            if request.user.is_authenticated:
-                plan.created_by = request.user
-            plan.save()
+            form.save()
             messages.success(request, "Procurement plan saved.")
             return redirect('procurement:plan_list')
     else:
@@ -44,10 +41,7 @@ def requisition_list(request):
     if request.method == 'POST':
         form = RequisitionForm(request.POST)
         if form.is_valid():
-            requisition = form.save(commit=False)
-            if request.user.is_authenticated:
-                requisition.requested_by = request.user
-            requisition.save()
+            form.save()
             messages.success(request, "Requisition saved.")
             return redirect('procurement:requisition_list')
     else:
