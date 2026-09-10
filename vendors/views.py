@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from .forms import (
     VendorForm, VendorContactForm, VendorPerformanceForm,
     VendorIssueForm, VendorEscalationForm
 )
 
 
+@login_required
+@permission_required("vendors.view_vendor", raise_exception=True)
 def vendor_list(request):
     if request.method == 'POST':
         form = VendorForm(request.POST)
@@ -21,6 +24,8 @@ def vendor_list(request):
     })
 
 
+@login_required
+@permission_required("vendors.view_vendorcontact", raise_exception=True)
 def contact_list(request):
     if request.method == 'POST':
         form = VendorContactForm(request.POST)
@@ -36,6 +41,8 @@ def contact_list(request):
     })
 
 
+@login_required
+@permission_required("vendors.view_vendorperformance", raise_exception=True)
 def performance_list(request):
     if request.method == 'POST':
         form = VendorPerformanceForm(request.POST)
@@ -58,6 +65,8 @@ def performance_list(request):
     })
 
 
+@login_required
+@permission_required("vendors.view_vendorissue", raise_exception=True)
 def issue_list(request):
     if request.method == 'POST':
         form = VendorIssueForm(request.POST)
@@ -76,6 +85,8 @@ def issue_list(request):
     })
 
 
+@login_required
+@permission_required("vendors.view_vendorescalation", raise_exception=True)
 def escalation_list(request):
     if request.method == 'POST':
         form = VendorEscalationForm(request.POST)

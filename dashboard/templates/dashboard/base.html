@@ -72,10 +72,10 @@
     <nav>
         <a href="{% url 'dashboard:dashboard_home' %}">IT Eqp SMS</a>
         <a href="{% url 'dashboard:dashboard_home' %}" class="active">Dashboard</a>
-        <a href="{% url 'vendors:vendor_list' %}">Vendors</a>
-        <a href="{% url 'procurement:plan_list' %}">Procurement</a>
-        <a href="{% url 'contracts:contract_list' %}">Contracts</a>
-        <a href="{% url 'it_assets:dashboard' %}" style="margin-left:auto; color:#93c5fd;">&larr; IT Assets App</a>
+        {% if perms.vendors.view_vendor %}<a href="{% url 'vendors:vendor_list' %}">Vendors</a>{% endif %}
+        {% if perms.procurement.view_procurement %}<a href="{% url 'procurement:procurement_list' %}">Procurement</a>{% endif %}
+        {% if perms.contracts.view_contract %}<a href="{% url 'contracts:contract_list' %}">Contracts</a>{% endif %}
+        {% if perms.it_assets.view_asset %}<a href="{% url 'it_assets:dashboard' %}" style="margin-left:auto; color:#93c5fd;">&larr; IT Assets App</a>{% endif %}
     </nav>
     <div class="page-wrap">
         {% block content %}{% endblock %}

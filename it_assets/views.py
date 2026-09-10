@@ -1,19 +1,19 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import F
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from datetime import timedelta
 
 from .models import (
-    Asset, AssetCategory, StockItem,
+    Employee, Asset, AssetCategory, StockItem,
     GoodsReceipt, GoodsReceiptItem,
     EquipmentIssue, EquipmentReturn, AssetTransfer,
     FaultReport, RepairRecord,
     InventoryVerification, InventoryVerificationItem, InventoryReconciliation,
 )
 from .forms import (
-    AssetForm, AssetCategoryForm, StockItemForm,
+    EmployeeForm, AssetForm, AssetCategoryForm, StockItemForm,
     GoodsReceiptForm, GoodsReceiptItemForm,
     EquipmentIssueForm, EquipmentReturnForm, AssetTransferForm,
     FaultReportForm, RepairRecordForm,
@@ -87,15 +87,51 @@ def dashboard(request):
 
 
 # ---------------------------------------------------------------------------
+# Employee (asset custody tracking)
+# ---------------------------------------------------------------------------
+@login_required
+@permission_required("it_assets.view_employee", raise_exception=True)
+def employee_list(request):
+    employees = Employee.objects.all()
+    return render(request, "it_assets/employee_list.html", {"employees": employees})
+
+
+@login_required
+@permission_required("it_assets.add_employee", raise_exception=True)
+def employee_create(request):
+    form = EmployeeForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        employee = form.save()
+        messages.success(request, f"Employee {employee.full_name} added.")
+        return redirect("it_assets:employee_list")
+    return render(request, "it_assets/employee_form.html", {"form": form})
+
+
+@login_required
+@permission_required("it_assets.view_employee", raise_exception=True)
+def employee_detail(request, pk):
+    employee = get_object_or_404(Employee, pk=pk)
+    return render(request, "it_assets/employee_detail.html", {
+        "employee": employee,
+        "assets_held": employee.assigned_assets.all(),
+        "issues": employee.equipment_received.select_related("asset").all(),
+        "transfers_in": employee.transfers_in.select_related("asset").all(),
+        "transfers_out": employee.transfers_out.select_related("asset").all(),
+    })
+
+
+# ---------------------------------------------------------------------------
 # Asset Category
 # ---------------------------------------------------------------------------
 @login_required
+@permission_required("it_assets.view_assetcategory", raise_exception=True)
 def category_list(request):
     categories = AssetCategory.objects.all()
     return render(request, "it_assets/category_list.html", {"categories": categories})
 
 
 @login_required
+@permission_required("it_assets.add_assetcategory", raise_exception=True)
 def category_create(request):
     form = AssetCategoryForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -109,6 +145,7 @@ def category_create(request):
 # Asset
 # ---------------------------------------------------------------------------
 @login_required
+@permission_required("it_assets.view_asset", raise_exception=True)
 def asset_list(request):
     assets = Asset.objects.select_related("category", "assigned_to").all()
     status_filter = request.GET.get("status")
@@ -122,6 +159,7 @@ def asset_list(request):
 
 
 @login_required
+@permission_required("it_assets.view_asset", raise_exception=True)
 def asset_detail(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
     return render(request, "it_assets/asset_detail.html", {
@@ -133,6 +171,7 @@ def asset_detail(request, pk):
 
 
 @login_required
+@permission_required("it_assets.add_asset", raise_exception=True)
 def asset_create(request):
     form = AssetForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -143,6 +182,7 @@ def asset_create(request):
 
 
 @login_required
+@permission_required("it_assets.change_asset", raise_exception=True)
 def asset_update(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
     form = AssetForm(request.POST or None, instance=asset)
@@ -157,12 +197,14 @@ def asset_update(request, pk):
 # Stock Items
 # ---------------------------------------------------------------------------
 @login_required
+@permission_required("it_assets.view_stockitem", raise_exception=True)
 def stock_list(request):
     items = StockItem.objects.select_related("category").all()
     return render(request, "it_assets/stock_list.html", {"items": items})
 
 
 @login_required
+@permission_required("it_assets.add_stockitem", raise_exception=True)
 def stock_create(request):
     form = StockItemForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -176,6 +218,7 @@ def stock_create(request):
 # Goods Receipt
 # ---------------------------------------------------------------------------
 @login_required
+@permission_required("it_assets.add_goodsreceipt", raise_exception=True)
 def goods_receipt_create(request):
     form = GoodsReceiptForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -188,6 +231,7 @@ def goods_receipt_create(request):
 
 
 @login_required
+@permission_required("it_assets.add_goodsreceiptitem", raise_exception=True)
 def goods_receipt_add_item(request, pk):
     receipt = get_object_or_404(GoodsReceipt, pk=pk)
     form = GoodsReceiptItemForm(request.POST or None)
@@ -203,6 +247,7 @@ def goods_receipt_add_item(request, pk):
 
 
 @login_required
+@permission_required("it_assets.view_goodsreceipt", raise_exception=True)
 def goods_receipt_detail(request, pk):
     receipt = get_object_or_404(GoodsReceipt, pk=pk)
     return render(request, "it_assets/goods_receipt_detail.html", {
@@ -215,6 +260,7 @@ def goods_receipt_detail(request, pk):
 # Equipment Issue / Return / Transfer
 # ---------------------------------------------------------------------------
 @login_required
+@permission_required("it_assets.add_equipmentissue", raise_exception=True)
 def issue_create(request):
     form = EquipmentIssueForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -228,12 +274,14 @@ def issue_create(request):
 
 
 @login_required
+@permission_required("it_assets.view_equipmentissue", raise_exception=True)
 def issue_list(request):
     issues = EquipmentIssue.objects.select_related("asset", "stock_item", "issued_to").all()
     return render(request, "it_assets/issue_list.html", {"issues": issues})
 
 
 @login_required
+@permission_required("it_assets.add_equipmentreturn", raise_exception=True)
 def return_create(request, issue_pk):
     issue = get_object_or_404(EquipmentIssue, pk=issue_pk)
     form = EquipmentReturnForm(request.POST or None)
@@ -248,11 +296,12 @@ def return_create(request, issue_pk):
 
 
 @login_required
+@permission_required("it_assets.add_assettransfer", raise_exception=True)
 def transfer_create(request):
     form = AssetTransferForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         transfer = form.save(commit=False)
-        transfer.from_user = transfer.asset.assigned_to
+        transfer.from_employee = transfer.asset.assigned_to
         transfer.from_department = transfer.asset.current_department
         transfer.from_location = transfer.asset.location
         transfer.approved_by = request.user
@@ -266,6 +315,7 @@ def transfer_create(request):
 # PHASE 3 — Fault Reporting & Repair Tracking
 # ---------------------------------------------------------------------------
 @login_required
+@permission_required("it_assets.view_faultreport", raise_exception=True)
 def fault_report_list(request):
     faults = FaultReport.objects.select_related("asset", "reported_by").all()
     status_filter = request.GET.get("status")
@@ -279,6 +329,7 @@ def fault_report_list(request):
 
 
 @login_required
+@permission_required("it_assets.add_faultreport", raise_exception=True)
 def fault_report_create(request):
     initial = {}
     asset_id = request.GET.get("asset")
@@ -295,6 +346,7 @@ def fault_report_create(request):
 
 
 @login_required
+@permission_required("it_assets.view_faultreport", raise_exception=True)
 def fault_report_detail(request, pk):
     fault = get_object_or_404(FaultReport, pk=pk)
     return render(request, "it_assets/fault_report_detail.html", {
@@ -304,6 +356,7 @@ def fault_report_detail(request, pk):
 
 
 @login_required
+@permission_required("it_assets.add_repairrecord", raise_exception=True)
 def repair_record_create(request, fault_pk):
     fault = get_object_or_404(FaultReport, pk=fault_pk)
     form = RepairRecordForm(request.POST or None)
@@ -317,6 +370,7 @@ def repair_record_create(request, fault_pk):
 
 
 @login_required
+@permission_required("it_assets.change_repairrecord", raise_exception=True)
 def repair_record_update(request, pk):
     repair = get_object_or_404(RepairRecord, pk=pk)
     form = RepairRecordForm(request.POST or None, instance=repair)
@@ -331,12 +385,14 @@ def repair_record_update(request, pk):
 # PHASE 4 — Physical Verification & Asset Tagging
 # ---------------------------------------------------------------------------
 @login_required
+@permission_required("it_assets.view_inventoryverification", raise_exception=True)
 def verification_list(request):
     verifications = InventoryVerification.objects.select_related("conducted_by").all()
     return render(request, "it_assets/verification_list.html", {"verifications": verifications})
 
 
 @login_required
+@permission_required("it_assets.add_inventoryverification", raise_exception=True)
 def verification_create(request):
     form = InventoryVerificationForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -349,6 +405,7 @@ def verification_create(request):
 
 
 @login_required
+@permission_required("it_assets.view_inventoryverification", raise_exception=True)
 def verification_detail(request, pk):
     verification = get_object_or_404(InventoryVerification, pk=pk)
     return render(request, "it_assets/verification_detail.html", {
@@ -359,6 +416,7 @@ def verification_detail(request, pk):
 
 
 @login_required
+@permission_required("it_assets.add_inventoryverificationitem", raise_exception=True)
 def verification_add_item(request, pk):
     verification = get_object_or_404(InventoryVerification, pk=pk)
     form = InventoryVerificationItemForm(request.POST or None)
@@ -373,6 +431,7 @@ def verification_add_item(request, pk):
 
 
 @login_required
+@permission_required("it_assets.add_inventoryreconciliation", raise_exception=True)
 def verification_add_reconciliation(request, pk):
     verification = get_object_or_404(InventoryVerification, pk=pk)
     form = InventoryReconciliationForm(request.POST or None)
@@ -386,6 +445,7 @@ def verification_add_reconciliation(request, pk):
 
 
 @login_required
+@permission_required("it_assets.change_inventoryverification", raise_exception=True)
 def verification_complete(request, pk):
     verification = get_object_or_404(InventoryVerification, pk=pk)
     verification.status = InventoryVerification.Status.COMPLETED
@@ -395,6 +455,7 @@ def verification_complete(request, pk):
 
 
 @login_required
+@permission_required("it_assets.view_asset", raise_exception=True)
 def asset_qr_code(request, pk):
     """Generate a QR code image on-the-fly for an asset (encodes the asset detail URL)."""
     from django.http import HttpResponse

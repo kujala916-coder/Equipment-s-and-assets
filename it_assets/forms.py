@@ -1,12 +1,18 @@
 from django import forms
 
 from .models import (
-    Asset, AssetCategory, StockItem,
+    Employee, Asset, AssetCategory, StockItem,
     GoodsReceipt, GoodsReceiptItem,
     EquipmentIssue, EquipmentReturn, AssetTransfer,
     FaultReport, RepairRecord,
     InventoryVerification, InventoryVerificationItem, InventoryReconciliation,
 )
+
+
+class EmployeeForm(forms.ModelForm):
+    class Meta:
+        model = Employee
+        fields = ["hr_number", "full_name", "department", "designation", "phone", "email", "user", "is_active"]
 
 
 class AssetForm(forms.ModelForm):
@@ -90,7 +96,7 @@ class AssetTransferForm(forms.ModelForm):
     class Meta:
         model = AssetTransfer
         fields = [
-            "asset", "to_user", "to_department", "to_location", "remarks",
+            "asset", "to_employee", "to_department", "to_location", "remarks",
         ]
 
 

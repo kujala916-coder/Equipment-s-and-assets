@@ -9,6 +9,32 @@ from django.core.exceptions import ValidationError
 
 
 # ---------------------------------------------------------------------------
+# 1.0  Employee — who assets get assigned to/transferred between.
+# Separate from the login User (a User may or may not have an account),
+# so HR details are tracked even for employees who never log into the app.
+# ---------------------------------------------------------------------------
+class Employee(models.Model):
+    hr_number = models.CharField(max_length=30, unique=True, help_text="HR / employee ID number")
+    full_name = models.CharField(max_length=150)
+    department = models.CharField(max_length=100, blank=True)
+    designation = models.CharField(max_length=100, blank=True)
+    phone = models.CharField(max_length=20, blank=True)
+    email = models.EmailField(blank=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="employee_profile",
+        help_text="Link to their login account, if they have one",
+    )
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["full_name"]
+
+    def __str__(self):
+        return f"{self.full_name} ({self.hr_number})"
+
+
+# ---------------------------------------------------------------------------
 # 1.1  Asset Category
 # ---------------------------------------------------------------------------
 class AssetCategory(models.Model):
@@ -69,7 +95,7 @@ class Asset(models.Model):
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.IN_STOCK)
 
     assigned_to = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True,
+        "Employee", null=True, blank=True,
         on_delete=models.SET_NULL, related_name="assigned_assets"
     )
     current_department = models.CharField(max_length=100, blank=True)
@@ -240,7 +266,7 @@ class EquipmentIssue(models.Model):
     stock_item = models.ForeignKey(StockItem, null=True, blank=True, on_delete=models.SET_NULL)
     quantity = models.PositiveIntegerField(default=1)
 
-    issued_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="equipment_received")
+    issued_to = models.ForeignKey("Employee", on_delete=models.PROTECT, related_name="equipment_received")
     department = models.CharField(max_length=100, blank=True)
     issue_date = models.DateField(auto_now_add=True)
     condition = models.CharField(max_length=50, default="Good")
@@ -292,8 +318,8 @@ class EquipmentReturn(models.Model):
 
 class AssetTransfer(models.Model):
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="transfers")
-    from_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="transfers_out")
-    to_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="transfers_in")
+    from_employee = models.ForeignKey("Employee", null=True, blank=True, on_delete=models.SET_NULL, related_name="transfers_out")
+    to_employee = models.ForeignKey("Employee", null=True, blank=True, on_delete=models.SET_NULL, related_name="transfers_in")
     from_department = models.CharField(max_length=100, blank=True)
     to_department = models.CharField(max_length=100, blank=True)
     from_location = models.CharField(max_length=150, blank=True)
@@ -310,7 +336,7 @@ class AssetTransfer(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.asset.assigned_to = self.to_user
+        self.asset.assigned_to = self.to_employee
         if self.to_department:
             self.asset.current_department = self.to_department
         if self.to_location:

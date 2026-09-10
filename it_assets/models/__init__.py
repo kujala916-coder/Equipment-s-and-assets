@@ -6,6 +6,7 @@ Django doesn't care about this, it just needs every model importable from
 """
 
 from .phase1 import (
+    Employee,
     AssetCategory,
     Asset,
     StockItem,
@@ -32,7 +33,7 @@ from .phase4 import (
 )
 
 __all__ = [
-    "AssetCategory", "Asset", "StockItem",
+    "Employee", "AssetCategory", "Asset", "StockItem",
     "GoodsReceipt", "GoodsReceiptItem", "StockTransaction",
     "EquipmentIssue", "EquipmentReturn", "AssetTransfer",
     "FaultReport", "RepairRecord", "Warranty", "WarrantyClaim",

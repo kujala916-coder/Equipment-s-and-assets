@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from .forms import (
     ProcurementPlanForm, ProcurementRequirementForm, RequisitionForm,
     ProcurementForm, ProcurementItemForm, TechnicalSpecificationForm,
@@ -7,6 +8,8 @@ from .forms import (
 )
 
 
+@login_required
+@permission_required("procurement.view_procurementplan", raise_exception=True)
 def plan_list(request):
     if request.method == 'POST':
         form = ProcurementPlanForm(request.POST)
@@ -22,6 +25,8 @@ def plan_list(request):
     })
 
 
+@login_required
+@permission_required("procurement.view_procurementrequirement", raise_exception=True)
 def requirement_list(request):
     if request.method == 'POST':
         form = ProcurementRequirementForm(request.POST)
@@ -37,6 +42,8 @@ def requirement_list(request):
     })
 
 
+@login_required
+@permission_required("procurement.view_requisition", raise_exception=True)
 def requisition_list(request):
     if request.method == 'POST':
         form = RequisitionForm(request.POST)
@@ -52,6 +59,8 @@ def requisition_list(request):
     })
 
 
+@login_required
+@permission_required("procurement.view_procurement", raise_exception=True)
 def procurement_list(request):
     if request.method == 'POST':
         form = ProcurementForm(request.POST)
@@ -67,6 +76,8 @@ def procurement_list(request):
     })
 
 
+@login_required
+@permission_required("procurement.view_procurementitem", raise_exception=True)
 def procurement_item_list(request):
     if request.method == 'POST':
         form = ProcurementItemForm(request.POST)
@@ -82,6 +93,8 @@ def procurement_item_list(request):
     })
 
 
+@login_required
+@permission_required("procurement.view_technicalspecification", raise_exception=True)
 def specification_list(request):
     if request.method == 'POST':
         form = TechnicalSpecificationForm(request.POST)
@@ -97,6 +110,8 @@ def specification_list(request):
     })
 
 
+@login_required
+@permission_required("procurement.view_technicalevaluation", raise_exception=True)
 def evaluation_list(request):
     if request.method == 'POST':
         form = TechnicalEvaluationForm(request.POST)
@@ -115,6 +130,8 @@ def evaluation_list(request):
     })
 
 
+@login_required
+@permission_required("procurement.view_evaluationitem", raise_exception=True)
 def evaluation_item_list(request):
     if request.method == 'POST':
         form = EvaluationItemForm(request.POST)

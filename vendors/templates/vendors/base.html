@@ -36,12 +36,12 @@
     <nav>
         <a href="{% url 'dashboard:dashboard_home' %}">IT Eqp SMS</a>
         <a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a>
-        <a href="{% url 'vendors:vendor_list' %}">Vendor</a>
-        <a href="{% url 'vendors:contact_list' %}">Contact</a>
-        <a href="{% url 'vendors:performance_list' %}">Performance</a>
-        <a href="{% url 'vendors:issue_list' %}">Issue</a>
-        <a href="{% url 'vendors:escalation_list' %}">Escalation</a>
-            <a href="{% url 'it_assets:dashboard' %}" style="margin-left:auto; color:#93c5fd;">&larr; IT Assets App</a>
+        {% if perms.vendors.view_vendor %}<a href="{% url 'vendors:vendor_list' %}">Vendor</a>{% endif %}
+        {% if perms.vendors.view_vendorcontact %}<a href="{% url 'vendors:contact_list' %}">Contact</a>{% endif %}
+        {% if perms.vendors.view_vendorperformance %}<a href="{% url 'vendors:performance_list' %}">Performance</a>{% endif %}
+        {% if perms.vendors.view_vendorissue %}<a href="{% url 'vendors:issue_list' %}">Issue</a>{% endif %}
+        {% if perms.vendors.view_vendorescalation %}<a href="{% url 'vendors:escalation_list' %}">Escalation</a>{% endif %}
+        {% if perms.it_assets.view_asset %}<a href="{% url 'it_assets:dashboard' %}" style="margin-left:auto; color:#93c5fd;">&larr; IT Assets App</a>{% endif %}
     </nav>
     <div class="page-wrap">
         {% block content %}{% endblock %}

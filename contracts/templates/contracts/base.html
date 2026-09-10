@@ -47,39 +47,6 @@
             color: #ffffff;
             margin-right: 10px;
         }
-        /* Dropdown menus (Contract / License / SLA) */
-        .dropdown {
-            position: relative;
-            height: 50px;
-        }
-        .dropdown-toggle {
-            cursor: pointer;
-        }
-        .dropdown-toggle::after {
-            content: "▾";
-            margin-left: 6px;
-            font-size: 11px;
-        }
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 50px;
-            left: 0;
-            flex-direction: column;
-            background: #1f2733;
-            min-width: 150px;
-            border-top: 2px solid #303b4a;
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
-            z-index: 20;
-        }
-        .dropdown:hover .dropdown-menu {
-            display: flex;
-        }
-        .dropdown-menu a {
-            height: 42px;
-            padding: 0 16px;
-            border-bottom: none;
-        }
         /* Main content */
         .container {
             width: 100%;
@@ -156,32 +123,16 @@
         <a href="{% url 'dashboard:dashboard_home' %}">
             Dashboard
         </a>
-
-        <div class="dropdown">
-            <a href="#" class="dropdown-toggle">Contract</a>
-            <div class="dropdown-menu">
-                <a href="{% url 'contracts:contract_list' %}">Add</a>
-                <a href="{% url 'contracts:renewal_list' %}">Renew</a>
-            </div>
-        </div>
-
-        <div class="dropdown">
-            <a href="#" class="dropdown-toggle">License</a>
-            <div class="dropdown-menu">
-                <a href="{% url 'contracts:license_add' %}">Add</a>
-                <a href="{% url 'contracts:license_renew' %}">Renew</a>
-            </div>
-        </div>
-
-        <div class="dropdown">
-            <a href="#" class="dropdown-toggle">SLA</a>
-            <div class="dropdown-menu">
-                <a href="{% url 'contracts:sla_add' %}">Add</a>
-                <a href="{% url 'contracts:sla_renew' %}">Renew</a>
-            </div>
-        </div>
-
-        <a href="{% url 'it_assets:dashboard' %}" style="margin-left:auto; color:#93c5fd;">&larr; IT Assets App</a>
+        {% if perms.contracts.view_contract %}<a href="{% url 'contracts:contract_list' %}">
+            Contract
+        </a>{% endif %}
+        {% if perms.contracts.view_contractrenewal %}<a href="{% url 'contracts:renewal_list' %}">
+            Renewal
+        </a>{% endif %}
+        {% if perms.contracts.view_license %}<a href="{% url 'contracts:license_list' %}">
+            License
+        </a>{% endif %}
+            {% if perms.it_assets.view_asset %}<a href="{% url 'it_assets:dashboard' %}" style="margin-left:auto; color:#93c5fd;">&larr; IT Assets App</a>{% endif %}
     </nav>
     <div class="container">
         {% if messages %}

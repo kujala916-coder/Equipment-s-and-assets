@@ -1,13 +1,20 @@
 from django.contrib import admin
 
 from .models import (
-    AssetCategory, Asset, StockItem,
+    Employee, AssetCategory, Asset, StockItem,
     GoodsReceipt, GoodsReceiptItem, StockTransaction,
     EquipmentIssue, EquipmentReturn, AssetTransfer,
     FaultReport, RepairRecord, Warranty, WarrantyClaim,
     InventoryVerification, InventoryVerificationItem,
     InventoryReconciliation, AssetTag,
 )
+
+
+@admin.register(Employee)
+class EmployeeAdmin(admin.ModelAdmin):
+    list_display = ("hr_number", "full_name", "department", "designation", "is_active")
+    list_filter = ("department", "is_active")
+    search_fields = ("hr_number", "full_name")
 
 
 @admin.register(Asset)

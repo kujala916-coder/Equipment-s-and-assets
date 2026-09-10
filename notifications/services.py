@@ -65,7 +65,7 @@ def notify_delivery_received(goods_receipt):
         create_notification(
             recipient=user,
             title="Delivery Received",
-            message=f"Goods receipt #{goods_receipt.pk} has been logged at '{goods_receipt.store}'.",
+            message=f"Goods receipt '{goods_receipt.grn_number}' has been logged.",
             notification_type="procurement",
             priority="medium",
             dedupe_key=f"delivery-received-{goods_receipt.pk}",
@@ -184,10 +184,11 @@ def notify_inventory_verification(asset):
 
 # ---------- 12. Pending acknowledgement ----------
 def notify_pending_acknowledgement(issue):
-    if not issue.issued_to:
+    employee = issue.issued_to
+    if not employee or not employee.user:
         return
     create_notification(
-        recipient=issue.issued_to,
+        recipient=employee.user,
         title="Please Acknowledge Your Assigned Equipment",
         message=f"You still need to confirm receipt of '{issue.asset.asset_id}'.",
         notification_type="acknowledgement",

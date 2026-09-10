@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>{% block title %}IT Equipment SMS{% endblock %}</title>
 
-
+```
 <style>
     * {
         box-sizing: border-box;
@@ -127,13 +127,13 @@
         background: #303b4a;
     }
 </style>
-
+```
 
 </head>
 
 <body>
 
-
+```
 <nav>
     <a class="brand" href="/">IT Eqp SMS</a>
 
@@ -141,38 +141,39 @@
         Dashboard
     </a>
 
-    <a href="{% url 'procurement:plan_list' %}">
+    {% if perms.procurement.view_procurementplan %}<a href="{% url 'procurement:plan_list' %}">
         Plan
-    </a>
+    </a>{% endif %}
 
-    <a href="{% url 'procurement:requirement_list' %}">
+    {% if perms.procurement.view_procurementrequirement %}<a href="{% url 'procurement:requirement_list' %}">
         Requirement
-    </a>
+    </a>{% endif %}
 
-    <a href="{% url 'procurement:requisition_list' %}">
+    {% if perms.procurement.view_requisition %}<a href="{% url 'procurement:requisition_list' %}">
         Requisition
-    </a>
+    </a>{% endif %}
 
-    <a href="{% url 'procurement:procurement_list' %}">
+    {% if perms.procurement.view_procurement %}<a href="{% url 'procurement:procurement_list' %}">
         Procurement
-    </a>
+    </a>{% endif %}
 
-    <a href="{% url 'procurement:procurement_item_list' %}">
+    {% if perms.procurement.view_procurementitem %}<a href="{% url 'procurement:procurement_item_list' %}">
         Item
-    </a>
+    </a>{% endif %}
 
-    <a href="{% url 'procurement:specification_list' %}">
+    {% if perms.procurement.view_technicalspecification %}<a href="{% url 'procurement:specification_list' %}">
         Specification
-    </a>
+    </a>{% endif %}
 
-    <a href="{% url 'procurement:evaluation_list' %}">
+    {% if perms.procurement.view_technicalevaluation %}<a href="{% url 'procurement:evaluation_list' %}">
         Evaluation
-    </a>
+    </a>{% endif %}
 
-    <a href="{% url 'procurement:evaluation_item_list' %}">
+    {% if perms.procurement.view_evaluationitem %}<a href="{% url 'procurement:evaluation_item_list' %}">
         Eval. Item
-    </a>
-</nav>
+    </a>{% endif %}
+        {% if perms.it_assets.view_asset %}<a href="{% url 'it_assets:dashboard' %}" style="margin-left:auto; color:#93c5fd;">&larr; IT Assets App</a>{% endif %}
+    </nav>
 
 <div class="container">
 
@@ -187,7 +188,7 @@
     {% block content %}{% endblock %}
 
 </div>
-
+```
 
 </body>
 </html>

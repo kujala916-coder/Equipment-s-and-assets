@@ -6,6 +6,11 @@ app_name = "it_assets"
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
 
+    # Employees
+    path("employees/", views.employee_list, name="employee_list"),
+    path("employees/new/", views.employee_create, name="employee_create"),
+    path("employees/<int:pk>/", views.employee_detail, name="employee_detail"),
+
     # Categories
     path("categories/", views.category_list, name="category_list"),
     path("categories/new/", views.category_create, name="category_create"),

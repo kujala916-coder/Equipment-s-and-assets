@@ -16,7 +16,14 @@
     <p><strong>Category:</strong> {{ asset.category.name }}</p>
     <p><strong>Serial Number:</strong> {{ asset.serial_number }}</p>
     <p><strong>Status:</strong> <span class="status-badge">{{ asset.get_status_display }}</span></p>
-    <p><strong>Assigned To:</strong> {{ asset.assigned_to|default:"—" }}</p>
+    <p><strong>Currently With:</strong>
+        {% if asset.assigned_to %}
+            <a href="{% url 'it_assets:employee_detail' asset.assigned_to.pk %}">{{ asset.assigned_to.full_name }} ({{ asset.assigned_to.hr_number }})</a>
+            — {{ asset.assigned_to.department|default:"—" }}
+        {% else %}
+            — (in store, not assigned)
+        {% endif %}
+    </p>
     <p><strong>Department:</strong> {{ asset.current_department|default:"—" }}</p>
     <p><strong>Location:</strong> {{ asset.location|default:"—" }}</p>
     <p><strong>Vendor:</strong> {{ asset.vendor|default:"—" }}</p>

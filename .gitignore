@@ -1,1 +1,1 @@
-__pycache__/ *.pyc db.sqlite3 *.zip venv/ env/ .env *.log 
+__pycache__/ *.pyc db.sqlite3 *.zip venv/ env/ .env *.log  .env

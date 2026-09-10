@@ -26,23 +26,35 @@
     </style>
 </head>
 <body>
-    <nav>
+       <nav>
         <a href="{% url 'it_assets:dashboard' %}">Dashboard</a>
-        <a href="{% url 'it_assets:asset_list' %}">Assets</a>
-        <a href="{% url 'it_assets:category_list' %}">Categories</a>
-        <a href="{% url 'it_assets:stock_list' %}">Stock</a>
-        <a href="{% url 'it_assets:issue_list' %}">Issues</a>
-        <a href="{% url 'it_assets:fault_report_list' %}">Faults</a>
-        <a href="{% url 'it_assets:verification_list' %}">Verification</a>
-        <a href="{% url 'it_assets:goods_receipt_create' %}">New Receipt</a>
-        <a href="{% url 'it_assets:transfer_create' %}">Transfer Asset</a>
+        {% if perms.it_assets.view_asset %}<a href="{% url 'it_assets:asset_list' %}">Assets</a>{% endif %}
+        {% if perms.it_assets.view_employee %}<a href="{% url 'it_assets:employee_list' %}">Employees</a>{% endif %}
+        {% if perms.it_assets.view_assetcategory %}<a href="{% url 'it_assets:category_list' %}">Categories</a>{% endif %}
+        {% if perms.it_assets.view_stockitem %}<a href="{% url 'it_assets:stock_list' %}">Stock</a>{% endif %}
+        {% if perms.it_assets.view_equipmentissue %}<a href="{% url 'it_assets:issue_list' %}">Issues</a>{% endif %}
+        {% if perms.it_assets.view_faultreport %}<a href="{% url 'it_assets:fault_report_list' %}">Faults</a>{% endif %}
+        {% if perms.it_assets.view_inventoryverification %}<a href="{% url 'it_assets:verification_list' %}">Verification</a>{% endif %}
+        {% if perms.it_assets.add_goodsreceipt %}<a href="{% url 'it_assets:goods_receipt_create' %}">New Receipt</a>{% endif %}
+        {% if perms.it_assets.add_assettransfer %}<a href="{% url 'it_assets:transfer_create' %}">Transfer Asset</a>{% endif %}
         <span style="color:#6b7280;">|</span>
-        <a href="{% url 'vendors:vendor_list' %}">Vendors</a>
-        <a href="{% url 'procurement:plan_list' %}">Procurement</a>
-        <a href="{% url 'contracts:contract_list' %}">Contracts</a>
+        {% if perms.vendors.view_vendor %}<a href="{% url 'vendors:vendor_list' %}">Vendors</a>{% endif %}
+        {% if perms.procurement.view_procurement %}<a href="{% url 'procurement:plan_list' %}">Procurement</a>{% endif %}
+        {% if perms.contracts.view_contract %}<a href="{% url 'contracts:contract_list' %}">Contracts</a>{% endif %}
         <a href="{% url 'notifications:notification_list' %}">Notifications</a>
-        <a href="{% url 'audit:audit_log_list' %}">Audit Log</a>
+        {% if perms.audit.view_auditlog %}<a href="{% url 'audit:audit_log_list' %}">Audit Log</a>{% endif %}
         <a href="{% url 'dashboard:dashboard_home' %}">Reports</a>
+        <span style="float:right; margin-left:20px; color:#fff; font-size:14px;">
+          {% if user.is_authenticated %}
+            Welcome, {{ user.username }} |
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" style="background:none; border:none; color:#fff; cursor:pointer; text-decoration:underline; padding:0; font-size:14px;">Logout</button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" style="color:#fff;">Login</a>
+          {% endif %}
+        </span>
     </nav>
     <div class="container">
         {% if messages %}

@@ -133,8 +133,15 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
-LOGIN_URL = '/admin/login/'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
 
 # Keep users logged in longer
 SESSION_COOKIE_AGE = 1209600  # 2 weeks (Django's default, but now explicit)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+SUPERSET_URL = "http://127.0.0.1:8088"
+SUPERSET_USERNAME = "faizahkhan"          # apna Superset admin username
+SUPERSET_PASSWORD = "@rajpoot777#FA"  # apna Superset admin password
+SUPERSET_DASHBOARD_ID = "9475b4cd-d879-4cba-ae24-4d18c5193300"
